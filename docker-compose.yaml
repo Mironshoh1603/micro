@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   gateway:
     build: ./gateway
@@ -7,23 +7,23 @@ services:
       - 3000:3000
     networks:
       - micronet
-  postgres1:
-    image: postgres:14
-    restart: always
+  post_db:
+    image: postgres:16.4
+    # restart: always
+    environment:
+      POSTGRES_HOST: localhost
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: library
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
     networks:
       - micronet
-    environment:
-      POSTGRES_DB: games # Database name
-      POSTGRES_USER: postgres # Username
-      POSTGRES_PASSWORD: 1234
-    ports:
-      - 5435:5432
   game:
     build: ./game-service
     restart: always
     depends_on:
-      - postgres1
-      - gateway
+      - post_db
     networks:
       - micronet
     ports:
